@@ -5,5 +5,5 @@ By default, TensorFlow Lite executes each model on the CPU. In order to use Tens
 
 
 ## Reference
-https://www.tensorflow.org/lite/guide?hl=ko
+https://www.tensorflow.org/lite/guide?hl=ko  
 https://coral.ai/docs/
