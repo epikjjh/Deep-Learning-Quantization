@@ -86,8 +86,14 @@ converter.inference_output_type = tf.int8  # or tf.uint8
 tflite_quant_model = converter.convert()
 ~~~
 
+## TensorFlow Lite 8-bit quantization specification  
+### Specification summary
+8-bit quantization approximates floating point values using the following formula.  
+**real_value = (int8_value - zero_point) * scale**
+
 
 ## Reference
 https://www.tensorflow.org/lite/guide?hl=ko  
 https://coral.ai/docs/  
+https://nervanasystems.github.io/distiller/algo_quantization.html  
 https://colab.research.google.com/github/google-coral/tutorials/blob/master/retrain_classification_ptq_tf2.ipynb
