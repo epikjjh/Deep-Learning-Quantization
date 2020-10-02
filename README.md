@@ -89,4 +89,5 @@ tflite_quant_model = converter.convert()
 
 ## Reference
 https://www.tensorflow.org/lite/guide?hl=ko  
-https://coral.ai/docs/
+https://coral.ai/docs/  
+https://colab.research.google.com/github/google-coral/tutorials/blob/master/retrain_classification_ptq_tf2.ipynb?pli=1
