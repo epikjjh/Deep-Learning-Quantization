@@ -97,4 +97,5 @@ https://www.tensorflow.org/lite/guide?hl=ko
 https://coral.ai/docs/  
 https://nervanasystems.github.io/distiller/algo_quantization.html  
 https://github.com/google-coral/tflite/tree/master/python/examples/detection  
-https://colab.research.google.com/github/google-coral/tutorials/blob/master/retrain_classification_ptq_tf2.ipynb
+https://colab.research.google.com/github/google-coral/tutorials/blob/master/retrain_classification_ptq_tf2.ipynb  
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
