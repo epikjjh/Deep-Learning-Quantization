@@ -11,4 +11,5 @@ TensorFlow: 2.3 (to support for TensorFlow Lite Converter)
 <br></br>
 
 ## Code
-[google colab link](https://colab.research.google.com/drive/1jdQlq6lUbno62unjvrWKdb_gisHpPFy4?usp=sharing)
+model inspection: [google colab link](https://colab.research.google.com/drive/1jvyqfpibTa_XKEcNtUHJwwRDVLEtufYT?usp=sharing)  
+model quantization: [google colab link](https://colab.research.google.com/drive/1jdQlq6lUbno62unjvrWKdb_gisHpPFy4?usp=sharing)  
