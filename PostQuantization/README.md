@@ -5,9 +5,14 @@ TFLite currently only supports SSD Architectures (excluding EfficientDet) for bo
 <br></br>
 
 ## Environment
-Device: google coral dev board  
-OS: Mendel Linux 5.0  
+### Quantization
+Platform: Google Colab  
 TensorFlow: 2.3 (to support for TensorFlow Lite Converter)
+<br></br>
+
+### Inference
+Device: google coral dev board  
+OS: Mendel Linux 5.0
 <br></br>
 
 ## Code
