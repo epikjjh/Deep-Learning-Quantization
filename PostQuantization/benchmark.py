@@ -1,21 +1,15 @@
-import cv2
 import tflite_runtime.interpreter as tflite
+from PIL import Image, ImageDraw
 import numpy as np
 import time
 import argparse
-
-EDGETPU_SHARED_LIB = {
-  'Linux': 'libedgetpu.so.1',
-  'Darwin': 'libedgetpu.1.dylib',
-  'Windows': 'edgetpu.dll'
-}[platform.system()]
+import platform
 
 def inference(model, input, output):
   interpreter = tflite.Interpreter(
       model_path=model,
       experimental_delegates=[
-          tflite.load_delegate(EDGETPU_SHARED_LIB,
-                               {'device': device[0]} if device else {})
+          tflite.load_delegate('libedgetpu.so.1')
       ])
 
   input_details = interpreter.get_input_details()
@@ -33,47 +27,56 @@ def inference(model, input, output):
       x_max = int(min(width, (box[3] * width)))
       
       # draw a rectangle on the image
-      cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (255, 255, 255), 2)
+      draw = ImageDraw.Draw(image)
+      draw.rectangle([(x_min, y_min), (x_max, y_max)], outline='red')
 
   # NxHxWxC, H:1, W:2
   height = input_details[0]['shape'][1]
   width = input_details[0]['shape'][2]
 
-  img = cv2.imread(input)
-  new_img = cv2.resize(img, (width, height))
+  img = Image.open(input)
+  w, h = img.size
+  scale = min(width / w, height / h)
+  w, h = int(w * scale), int(h * scale)
 
+  tensor = interpreter.tensor(input_details[0]['index'])()[0]
+  tensor.fill(0)
+  _, _, channel = tensor.shape
+  tensor[:h, :w] = np.reshape(img.resize((w, h)), (h, w, channel))
+  
   if floating_model:
-    new_img = new_img.astype(np.float32, copy=False)
-    new_img = new_img / 255.0
-    new_img = (np.float32(new_img) - 127.5) / 127.5
-
-  interpreter.set_tensor(input_details[0]['index'], [new_img])
-
-  start_time = time.time()
+      tensor = tensor.astype(np.float32)
+      tensor = tensor / 255.0
+      tensor = (np.float32(tensor) - 127.5) / 127.5
+  
+  start_time = time.perf_counter()
   interpreter.invoke()
-  stop_time = time.time()
+  stop_time = time.perf_counter()
 
-  rects = interpreter.get_tensor(output_details[0]['index'])
+  rects = interpreter.tensor(interpreter.get_output_details()[0]['index'])()
+  rects = np.squeeze(rects)
 
-  scores = interpreter.get_tensor(output_details[2]['index'])
-      
+  scores = interpreter.tensor(interpreter.get_output_details()[2]['index'])()
+  scores = np.squeeze(scores)
+
+  img = img.convert('RGB')
+
   for index, score in enumerate(scores[0]):
     if score > 0.5:
-      draw_rect(new_img,rects[0][index])
-            
-  new_img = cv2.cvtColor(new_img, cv2.COLOR_BGR2RGB)
-  cv2.imwrite(output, new_img)
+      draw_rect(img,rects[0][index])
+
+  img.save(output)
   print('time: {:.3f}ms'.format((stop_time - start_time) * 1000))
   
 if __name__ == '__main__':
-   parser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument('-m', '--model', required=True,
+    parser.add_argument('-m', '--model', required=True,
                       help='File path of .tflite file.')
-  parser.add_argument('-i', '--input', required=True,
+    parser.add_argument('-i', '--input', required=True,
                       help='File path of image to process.')
-  parser.add_argument('-o', '--output',
+    parser.add_argument('-o', '--output',
                       help='File path for the result image with annotations')
-  args = parser.parse_args()
-  inference(args.model, args.input, args.output)
+    args = parser.parse_args()
+    inference(args.model, args.input, args.output)
   
