@@ -5,12 +5,17 @@ import time
 import argparse
 import platform
 
-def inference(model, input, output):
-  interpreter = tflite.Interpreter(
-      model_path=model,
-      experimental_delegates=[
-          tflite.load_delegate('libedgetpu.so.1')
-      ])
+def inference(model, input, output, device):
+  if device == 'edge':
+    interpreter = tflite.Interpreter(
+        model_path=model,
+        experimental_delegates=[
+            tflite.load_delegate('libedgetpu.so.1')
+        ])
+  else:
+    interpreter = tflite.Interpreter(
+        model_path=model
+    )
 
   input_details = interpreter.get_input_details()
   output_details = interpreter.get_output_details()
@@ -71,12 +76,10 @@ def inference(model, input, output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-m', '--model', required=True,
-                      help='File path of .tflite file.')
-    parser.add_argument('-i', '--input', required=True,
-                      help='File path of image to process.')
-    parser.add_argument('-o', '--output',
-                      help='File path for the result image with annotations')
+    parser.add_argument('-m', '--model', required=True)
+    parser.add_argument('-i', '--input', required=True)
+    parser.add_argument('-o', '--output', required=True)
+    parser.add_argument('-d', '--device', required=True)
     args = parser.parse_args()
-    inference(args.model, args.input, args.output)
+    inference(args.model, args.input, args.output, args.device)
   
