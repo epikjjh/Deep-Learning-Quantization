@@ -17,5 +17,5 @@ OS: Mendel Linux 5.0
 
 ## Code
 model inspection: [google colab link](https://colab.research.google.com/drive/1jvyqfpibTa_XKEcNtUHJwwRDVLEtufYT?usp=sharing)  
-model quantization: [google colab link](https://colab.research.google.com/drive/1jdQlq6lUbno62unjvrWKdb_gisHpPFy4?usp=sharing)  
+model quantization: [google colab link](https://colab.research.google.com/drive/1QcMs77CbzZyDIPJDFemOSnBLVn1g6JJC?usp=sharing)  
 model benchmark: [google colab link](https://colab.research.google.com/drive/1P1KFo15ZAyryICmBjFs3sLHtfhss9nHl?usp=sharing)  
