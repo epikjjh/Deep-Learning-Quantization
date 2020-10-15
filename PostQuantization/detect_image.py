@@ -52,14 +52,18 @@ def load_labels(path, encoding='utf-8'):
       return {index: line.strip() for index, line in enumerate(lines)}
 
 
-def make_interpreter(model_file):
-  model_file, *device = model_file.split('@')
-  return tflite.Interpreter(
+def make_interpreter(model_file, device_type):
+  if device_type == 'coral':
+    return tflite.Interpreter(
       model_path=model_file,
       experimental_delegates=[
-          tflite.load_delegate(EDGETPU_SHARED_LIB,
-                               {'device': device[0]} if device else {})
+          tflite.load_delegate('libedgetpu.so.1')
       ])
+  else:
+    return tflite.Interpreter(
+      model_path=model_file
+    )
+  
 
 
 def draw_objects(draw, objs, labels):
@@ -80,6 +84,8 @@ def main():
                       help='File path of .tflite file.')
   parser.add_argument('-i', '--input', required=True,
                       help='File path of image to process.')
+  parser.add_argument('-y', '--type', required=True,
+                      help='type of delegate')
   parser.add_argument('-l', '--labels',
                       help='File path of labels file.')
   parser.add_argument('-t', '--threshold', type=float, default=0.4,
@@ -91,7 +97,7 @@ def main():
   args = parser.parse_args()
 
   labels = load_labels(args.labels) if args.labels else {}
-  interpreter = make_interpreter(args.model)
+  interpreter = make_interpreter(args.model, args.type)
   interpreter.allocate_tensors()
 
   image = Image.open(args.input)
